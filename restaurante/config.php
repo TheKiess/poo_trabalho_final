@@ -9,5 +9,5 @@
   require_once BASE_PATH . "/classes/Pedido.php";
   require_once BASE_PATH . "/includes/DataStore.php";
 
-  $isPages  = str_contains($_SERVER["SCRIPT_FILENAME"], "/pages/");
-  $basePath = $isPages ? "../" : "";
+  $idArquivoPages  = str_contains($_SERVER["SCRIPT_FILENAME"], "/pages/");
+  $view            = $idArquivoPages ? "../" : "";
