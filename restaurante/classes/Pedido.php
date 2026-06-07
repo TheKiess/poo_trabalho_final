@@ -8,6 +8,7 @@
  */
 class Pedido
 {
+  private const DS_ARQUIVO = "pedidos.json";
   private static int $nrContadorId = 1;
 
   private int $idPedido;
@@ -63,19 +64,11 @@ class Pedido
    */
   public function adicionarItem(Produto $produto, int $qtItens): void
   {
-    if ($this->dsStatus !== "aberto")
-    {
-      throw new RuntimeException(
-        "Pedido #{$this->idPedido} com status \"{$this->dsStatus}\" não aceita novos itens."
-      );
-    }
+    if ($this->dsStatus != "aberto")
+      throw new RuntimeException("Pedido #{$this->idPedido} com status \"{$this->dsStatus}\" não aceita novos itens.");
 
     if (!$produto->isIdDisponivel())
-    {
-      throw new RuntimeException(
-        "Produto \"{$produto->getNmProduto()}\" está indisponível."
-      );
-    }
+      throw new RuntimeException("Produto \"{$produto->getNmProduto()}\" está indisponível.");
 
     $this->arrItens[] = new ItemPedido($produto, $qtItens);
   }
@@ -90,9 +83,7 @@ class Pedido
     $vlSubtotal = 0.0;
 
     foreach ($this->arrItens as $item)
-    {
       $vlSubtotal += $item->calcularSubtotal();
-    }
 
     return max(0.0, $vlSubtotal - $this->vlDesconto);
   }
@@ -107,12 +98,11 @@ class Pedido
    */
   public function aplicarDesconto(): float
   {
+    
     $vlSubtotal = 0.0;
 
     foreach ($this->arrItens as $item)
-    {
       $vlSubtotal += $item->calcularSubtotal();
-    }
 
     $this->vlDesconto = match(true)
     {
@@ -132,9 +122,7 @@ class Pedido
   public function confirmar(): void
   {
     if (empty($this->arrItens))
-    {
       throw new RuntimeException("Não é possível confirmar um pedido sem itens.");
-    }
 
     $this->dsStatus = "confirmado";
 
@@ -143,31 +131,142 @@ class Pedido
   }
 
   /**
-   * @throws RuntimeException
+   * Persiste o pedido no arquivo JSON e atualiza os pontos do cliente.
+   *
+   * @param  int $idCliente
+   * @return array
    */
-  public function cancelar(): void
+  public function salvarPedido(int $idCliente): array
   {
-    if ($this->dsStatus === "entregue")
-    {
-      throw new RuntimeException("Pedido já entregue não pode ser cancelado.");
-    }
+    $arrNovoPedido = array_merge(
+      ["id" => DataStore::incrementarProximoId(self::DS_ARQUIVO), "idCliente" => $idCliente],
+      $this->toArray()
+    );
 
-    $this->dsStatus = "cancelado";
+    $arrLista   = self::buscarPedidos();
+    $arrLista[] = $arrNovoPedido;
+    DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
+
+    Cliente::atualizarPontos($idCliente, (int) floor($this->calcularTotalPedido() / 10));
+
+    return $arrNovoPedido;
   }
 
   /**
-   * Serializa o pedido para array.
-   * Não possui fromArray pois a reconstrução depende de um Cliente já
-   * instanciado externamente — responsabilidade do DataStore.
+   * Orquestra a criação completa de um pedido:
+   * carrega cliente e produtos, aplica regras de negócio e persiste.
    *
+   * @param  int
+   * @param  array
+   * @throws RuntimeException
+   * @return array
+   */
+  public static function criarPedido(int $idCliente, array $arrItens): array
+  {
+    $arrDadosCliente = Cliente::buscarClientes($idCliente);
+
+    if (!$arrDadosCliente)
+      throw new RuntimeException("Cliente #{$idCliente} não encontrado.");
+
+    $cliente = Cliente::fromArray($arrDadosCliente);
+    $pedido  = new self($cliente);
+
+    foreach ($arrItens as $arrItem)
+    {
+      $arrDadosProduto = Produto::buscarProduto((int) $arrItem["idProduto"]);
+
+      if (!$arrDadosProduto || !(bool) $arrDadosProduto["idDisponivel"])
+        continue;
+
+      $pedido->adicionarItem(Produto::fromArray($arrDadosProduto), (int) $arrItem["quantidade"]);
+    }
+
+    if (empty($pedido->getArrItens()))
+      throw new RuntimeException("Nenhum item válido no pedido.");
+
+    $pedido->aplicarDesconto();
+    $pedido->confirmar();
+
+    return $pedido->salvarPedido($idCliente);
+  }
+
+  /**
+   * Caso não passado ID, buscará todos!
+   *
+   * @param  int $idPedido
+   * @return array
+   */
+  public static function buscarPedidos(int $idPedido = 0): array
+  {
+    if ($idPedido > 0)
+    {
+      foreach (self::buscarPedidos() as $arrPedido)
+        if ((int) $arrPedido["id"] == $idPedido)
+          return $arrPedido;
+
+      return [];
+    }
+
+    return DataStore::carregarArquivo(self::DS_ARQUIVO);
+  }
+
+  /**
+   * Cancela um pedido pelo id, desde que não esteja entregue.
+   *
+   * @param  int $idPedido
+   * @return bool
+   */
+  public static function cancelar(int $idPedido): bool
+  {
+    $arrLista = self::buscarPedidos();
+
+    foreach ($arrLista as &$arrPedido)
+    {
+      if ((int) $arrPedido["id"] != $idPedido || $arrPedido["dsStatus"] == "entregue")
+        continue;
+
+      $arrPedido["dsStatus"] = "cancelado";
+      DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Reconstrói um Pedido a partir de um array persistido.
+   *
+   * @param  array $arrPedido
+   * @param  int   $idCliente
+   * @return static
+   */
+  public static function fromArray(array $arrPedido, int $idCliente): static
+  {
+    $arrDadosCliente = Cliente::buscarClientes($idCliente);
+    $Cliente         = Cliente::fromArray($arrDadosCliente);
+
+    $Pedido             = new static($Cliente);
+    $Pedido->vlDesconto = $arrPedido["vlDesconto"];
+    $Pedido->dsStatus   = $arrPedido["dsStatus"];
+
+    return $Pedido;
+  }
+
+  /**
    * @return array
    */
   public function toArray(): array
   {
+    $arrItensPersistidos = [];
+
+    foreach ($this->arrItens as $item)
+      $arrItensPersistidos[] = $item->toArray();
+
     return [
       "nmCliente"     => $this->cliente->getNmPessoa(),
       "dsTipoCliente" => $this->cliente->getDsTipoCliente(),
-      "arrItens"      => array_map(fn($item) => $item->toArray(), $this->arrItens),
+      "arrItens"      => $arrItensPersistidos,
       "vlDesconto"    => $this->vlDesconto,
       "vlTotal"       => $this->calcularTotalPedido(),
       "dsStatus"      => $this->dsStatus,
@@ -188,16 +287,12 @@ class Pedido
     $out .= "╠══════════════════════════════════════════╣\n";
 
     foreach ($this->arrItens as $item)
-    {
       $out .= $item . "\n";
-    }
 
     $out .= "╠══════════════════════════════════════════╣\n";
 
     if ($this->vlDesconto > 0)
-    {
       $out .= "  Desconto : -R$ {$descFmt}\n";
-    }
 
     $out .= "  TOTAL    :  R$ {$vlFmt}\n";
     $out .= "╚══════════════════════════════════════════╝\n";

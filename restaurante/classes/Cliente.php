@@ -2,10 +2,11 @@
 
 /**
  * Representa um cliente do restaurante.
- * Herda de Pessoa e adiciona tipo e programa de fidelidade.
+ * Herda de Pessoa e adiciona tipo, programa de fidelidade e persistência.
  */
 class Cliente extends Pessoa
 {
+  private const DS_ARQUIVO = "clientes.json";
   private string $dsTipoCliente;
   private int $nrPontosFidelidade;
 
@@ -47,8 +48,65 @@ class Cliente extends Pessoa
     $this->nrPontosFidelidade += $nrPontos;
   }
 
+
   /**
-   * Serializa o cliente para array (sem o id do DataStore).
+   * @return array
+   */
+  public function salvarCliente(): array
+  {
+    $arrRegistro = array_merge(["id" => DataStore::incrementarProximoId(self::DS_ARQUIVO)], $this->toArray());
+    $arrLista    = self::buscarClientes();
+    $arrLista[]  = $arrRegistro;
+
+    DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
+
+    return $arrRegistro;
+  }
+
+  /**
+   * Caso não passado ID, buscará todos!
+   * 
+   * @param int $idCliente
+   * @return array
+   */
+  public static function buscarClientes(int $idCliente = 0): array
+  {
+    if ($idCliente > 0)
+    {
+      foreach (self::buscarClientes() as $arrCliente)
+        if ((int) $arrCliente["id"] == $idCliente)
+          return $arrCliente;
+
+      return [];
+    }
+
+    return DataStore::carregarArquivo(self::DS_ARQUIVO);
+  }
+
+  /**
+   * Atualiza os pontos de fidelidade de um cliente no arquivo JSON.
+   *
+   * @param null|int $idCliente
+   * @param int $nrPontos
+   */
+  public static function atualizarPontos(?int $idCliente, int $nrPontos = 0): void
+  {
+    $arrLista = self::buscarClientes();
+
+    foreach ($arrLista as &$arrCliente)
+    {
+      if ((int) $arrCliente["id"] != $idCliente)
+        continue;
+
+      $arrCliente["nrPontosFidelidade"] = max(0, $arrCliente["nrPontosFidelidade"] + $nrPontos);
+      break;
+    }
+
+    DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
+  }
+
+  /**
+   * Serializa o cliente para array (sem o id persistido).
    *
    * @return array
    */
@@ -68,22 +126,20 @@ class Cliente extends Pessoa
    */
   public static function fromArray(array $arrCliente): static
   {
-    $Cliente = new static(
+    $cliente = new static(
       $arrCliente["nmPessoa"],
       $arrCliente["dsCpf"],
       $arrCliente["dsEmail"],
       $arrCliente["dsTipoCliente"] ?? "comum"
     );
 
-    $Cliente->adicionarPontos($arrCliente["nrPontosFidelidade"]);
+    $cliente->adicionarPontos($arrCliente["nrPontosFidelidade"]);
 
-    return $Cliente;
+    return $cliente;
   }
 
   public function __toString(): string
   {
-    return parent::__toString()
-      . " | Tipo: {$this->dsTipoCliente}"
-      . " | Pontos: {$this->nrPontosFidelidade}";
+    return parent::__toString() . " | Tipo: {$this->dsTipoCliente}" . " | Pontos: {$this->nrPontosFidelidade}";
   }
 }
