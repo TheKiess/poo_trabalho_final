@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Representa um cliente do restaurante.
  * Herda de Pessoa e adiciona tipo, programa de fidelidade e persistência.

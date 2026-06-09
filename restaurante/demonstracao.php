@@ -15,6 +15,7 @@
   $pedido->confirmar();
   echo $pedido;
 
-  $garcom = new Funcionario("Carlos", "111.222.333-44", "c@rest.com", "Garçom", 2500.00);
-  $bonus  = $garcom->calcularBonusSalario(15);
-  echo "Bônus: R$ " . number_format($bonus, 2, ",", ".") . "\n";
+  $Garcom = new Funcionario("Carlos", "111.222.333-44", "carlos@email.com", "Garçom", 2500.00);
+  $vlBonus  = $Garcom->calcularBonusSalario(15);
+  echo $Garcom;
+  echo "\nBônus: R$ " . number_format($vlBonus, 2, ",", ".") . "\n";
