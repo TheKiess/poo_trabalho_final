@@ -76,6 +76,7 @@ class ItemPedido
     return "  • {$this->produto->getNmProduto()} x{$this->qtItens}"
       . " @ R$ {$vlUnit} = R$ {$vlTotal}";
   }
+<<<<<<< HEAD
 }
 /*@startuml
 
@@ -93,3 +94,6 @@ class ItemPedido {
 }
 
 @enduml*/
+=======
+}
+>>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976

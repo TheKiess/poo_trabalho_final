@@ -5,6 +5,7 @@
  */
 class Produto
 {
+  private const DS_ARQUIVO = "produtos.json";
   private static int $nrContadorId = 1;
 
   private int $idProduto;
@@ -20,12 +21,8 @@ class Produto
    * @param float  $vlPreco
    * @param string $dsCategoria
    */
-  public function __construct(
-    string $nmProduto,
-    string $dsProduto,
-    float $vlPreco,
-    string $dsCategoria
-  ) {
+  public function __construct(string $nmProduto, string $dsProduto, float $vlPreco, string $dsCategoria)
+  {
     $this->idProduto    = self::$nrContadorId++;
     $this->nmProduto    = $nmProduto;
     $this->dsProduto    = $dsProduto;
@@ -70,7 +67,61 @@ class Produto
   }
 
   /**
-   * Serializa o produto para array (sem o id do DataStore).
+   * Persiste o produto no arquivo JSON e retorna o registro salvo.
+   *
+   * @return array
+   */
+  public function salvarProduto(): array
+  {
+    $arrRegistro = array_merge(["id" => DataStore::incrementarProximoId(self::DS_ARQUIVO)], $this->toArray());
+
+    $arrLista   = self::buscarProduto();
+    $arrLista[] = $arrRegistro;
+    DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
+
+    return $arrRegistro;
+  }
+
+  /**
+   * Caso não passado ID, buscará todos!
+   * 
+   * @return array
+   */
+  public static function buscarProduto(int $idProduto = 0): array
+  {
+    if ($idProduto > 0)
+    {
+      foreach (self::buscarProduto() as $arrProduto)
+        if ((int) $arrProduto["id"] == $idProduto)
+          return $arrProduto;
+
+      return [];
+    }
+
+    return DataStore::carregarArquivo(self::DS_ARQUIVO);
+  }
+
+  /**
+   * @param int $idProduto
+   */
+  public static function mudarDisponibilidade(int $idProduto): void
+  {
+    $arrLista = self::buscarProduto();
+
+    foreach ($arrLista as &$arrProduto)
+    {
+      if ((int) $arrProduto["id"] != $idProduto)
+        continue;
+
+      $arrProduto["idDisponivel"] = !$arrProduto["idDisponivel"];
+      break;
+    }
+
+    DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
+  }
+
+  /**
+   * Serializa o produto para array (sem o id persistido).
    *
    * @return array
    */
@@ -88,21 +139,21 @@ class Produto
   /**
    * Reconstrói um Produto a partir de um array persistido.
    *
-   * @param  array $arr
+   * @param  array $arrProduto
    * @return static
    */
-  public static function fromArray(array $arr): static
+  public static function fromArray(array $arrProduto): static
   {
-    $obj = new static(
-      $arr["nmProduto"],
-      $arr["dsProduto"],
-      (float) $arr["vlPreco"],
-      $arr["dsCategoria"]
+    $produto = new static(
+      $arrProduto["nmProduto"],
+      $arrProduto["dsProduto"],
+      (float) $arrProduto["vlPreco"],
+      $arrProduto["dsCategoria"]
     );
 
-    $obj->setIdDisponivel((bool) $arr["idDisponivel"]);
+    $produto->setIdDisponivel((bool) $arrProduto["idDisponivel"]);
 
-    return $obj;
+    return $produto;
   }
 
   public function __toString(): string
@@ -112,6 +163,7 @@ class Produto
 
     return "#{$this->idProduto} [{$this->dsCategoria}] {$this->nmProduto} — R$ {$vlFmt} | {$status}";
   }
+<<<<<<< HEAD
 }
 
 /*@startuml
@@ -138,3 +190,6 @@ class Produto {
 }
 
 @enduml */
+=======
+}
+>>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976

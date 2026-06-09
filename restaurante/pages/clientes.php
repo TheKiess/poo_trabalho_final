@@ -1,4 +1,5 @@
 <?php
+
   require_once __DIR__ . "/../config.php";
   include      __DIR__ . "/../includes/nav.php";
 
@@ -14,15 +15,15 @@
     $dsTipoCliente = $_POST["dsTipoCliente"];
 
     if (!$nmPessoa || !$dsCpf || !$dsEmail)
-        $dsErro = "Preencha todos os campos obrigatórios.";
-    else 
+      $dsErro = "Preencha todos os campos obrigatórios.";
+    else
     {
-      DataStore::salvarCliente($nmPessoa, $dsCpf, $dsEmail, $dsTipoCliente);
+      (new Cliente($nmPessoa, $dsCpf, $dsEmail, $dsTipoCliente))->salvarCliente();
       $dsMsg = "Cliente <strong>{$nmPessoa}</strong> cadastrado com sucesso!";
     }
   }
 
-  $arrClientes = DataStore::getClientes();
+  $arrClientes = Cliente::buscarClientes();
 ?>
 
 <!DOCTYPE html>
@@ -55,8 +56,8 @@
       <?php endif ?>
 
       <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('lista')">👥 Lista de Clientes (<?= count($arrClientes) ?>)</button>
-        <button class="tab-btn" onclick="showTab('cadastro')">＋ Novo Cliente</button>
+        <button class="tab-btn active" onclick="showTab('lista', this)">👥 Lista de Clientes (<?= count($arrClientes) ?>)</button>
+        <button class="tab-btn" onclick="showTab('cadastro', this)">＋ Novo Cliente</button>
       </div>
 
       <div id="tab-lista" class="tab-pane active">
@@ -77,7 +78,7 @@
                 <?php if (empty($arrClientes)): ?>
                   <tr><td colspan="6" class="table-empty">
                     Nenhum cliente cadastrado ainda.<br>
-                    <button class="btn btn-outline btn-sm mt-4" onclick="showTab('cadastro')">
+                    <button class="btn btn-outline btn-sm mt-4" onclick="showTab('cadastro', document.querySelectorAll('.tab-btn')[1])">
                       Cadastrar primeiro cliente
                     </button>
                   </td></tr>
@@ -143,7 +144,7 @@
               </div>
               <div style="margin-top:20px; display:flex; gap:10px;">
                 <button type="submit" class="btn btn-primary">Cadastrar Cliente</button>
-                <button type="button" class="btn btn-outline" onclick="showTab('lista')">Cancelar</button>
+                <button type="button" class="btn btn-outline" onclick="showTab('lista', document.querySelectorAll('.tab-btn')[0])">Cancelar</button>
               </div>
             </form>
           </div>
@@ -153,17 +154,19 @@
   </div>
 
   <script>
-    function showTab(name)
+    function showTab(nmTab, objBotao)
     {
-      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      document.getElementById("tab-" + name).classList.add("active");
-      event.target.classList.add("active");
+      document.querySelectorAll(".tab-pane").forEach(function(p) { p.classList.remove("active"); });
+      document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+      document.getElementById("tab-" + nmTab).classList.add("active");
+
+      if (objBotao)
+        objBotao.classList.add("active");
     }
 
     <?php if ($dsMsg): ?>
-      ActiveXObjectdocument.querySelectorAll(".tab-btn")[0].classList.add("active");
-      ActiveXObjectdocument.querySelectorAll(".tab-btn")[1].classList.remove("active");
+      document.querySelectorAll(".tab-btn")[0].classList.add("active");
+      document.querySelectorAll(".tab-btn")[1].classList.remove("active");
     <?php endif ?>
   </script>
 

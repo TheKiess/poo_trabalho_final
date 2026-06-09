@@ -12,7 +12,7 @@
     $id = (int) ($_POST["idProduto"] ?? 0);
 
     if ($id > 0)
-      DataStore::toggleDisponibilidade($id);
+      Produto::mudarDisponibilidade($id);
 
     header("Location: produtos.php");
     exit;
@@ -29,12 +29,12 @@
       $dsErro = "Preencha nome, categoria e um preço válido.";
     else
     {
-      DataStore::salvarProduto($nmProduto, $dsProduto, $vlPreco, $dsCategoria);
+      (new Produto($nmProduto, $dsProduto, $vlPreco, $dsCategoria))->salvarProduto();
       $dsMsg = "Produto <strong>{$nmProduto}</strong> adicionado ao cardápio!";
     }
   }
 
-  $arrProdutos    = DataStore::getProdutos();
+  $arrProdutos    = Produto::buscarProduto();
   $arrCategorias  = array_unique(array_column($arrProdutos, "dsCategoria"));
   sort($arrCategorias);
 

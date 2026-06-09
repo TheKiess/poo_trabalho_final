@@ -3,11 +3,11 @@
   require_once __DIR__ . "/../config.php";
   include      __DIR__ . "/../includes/nav.php";
 
-  $dsPaginaAtual   = "funcionarios";
-  $dsMsg           = "";
-  $dsErro          = "";
-  $vlBonus         = null;
-  $arrFuncionarios = null;
+  $dsPaginaAtual      = "funcionarios";
+  $dsMsg              = "";
+  $dsErro             = "";
+  $vlBonus            = null;
+  $arrFuncionarioBonus = null;
 
   if ($_SERVER["REQUEST_METHOD"] == "POST")
   {
@@ -25,7 +25,7 @@
         $dsErro = "Preencha todos os campos com valores válidos.";
       else
       {
-        DataStore::salvarFuncionario($nmPessoa, $dsCpf, $dsEmail, $dsCargo, $vlSalario);
+        (new Funcionario($nmPessoa, $dsCpf, $dsEmail, $dsCargo, $vlSalario))->salvarFuncionario();
         $dsMsg = "Funcionário <strong>{$nmPessoa}</strong> cadastrado com sucesso!";
       }
     }
@@ -37,17 +37,8 @@
 
       try
       {
-        $vlBonus         = DataStore::calcularBonusFuncionario($idFuncionario, $prBonus);
-        $arrFuncionarios = DataStore::getFuncionarios();
-
-        foreach ($arrFuncionarios as $arrFuncionario)
-        {
-          if ((int) $arrFuncionario["id"] == $idFuncionario)
-          {
-            $arrFuncionarios = $arrFuncionario;
-            break;
-          }
-        }
+        $vlBonus             = Funcionario::calcularBonus($idFuncionario, $prBonus);
+        $arrFuncionarioBonus = Funcionario::buscarFuncionario($idFuncionario);
       }
       catch (InvalidArgumentException $e)
       {
@@ -60,13 +51,13 @@
     }
   }
 
-  $arrFuncionarios = DataStore::getFuncionarios();
+  $arrFuncionarios = Funcionario::buscarFuncionario();
 
   $dsTabAtiva = match(true)
   {
-    $dsErro != "" && $_POST["acao"] == "cadastrar" => "cadastro",
-    $dsMsg  != ""                                  => "lista",
-    default                                        => "lista"
+    $dsErro != "" && ($_POST["acao"] ?? "") == "cadastrar" => "cadastro",
+    $dsMsg  != ""                                          => "lista",
+    default                                                => "lista"
   };
 ?>
 
@@ -93,7 +84,7 @@
           <div class="alert alert-success">✔ <?= $dsMsg ?></div>
         <?php endif ?>
 
-        <?php if (!empty($dsErro) && $_POST["acao"] != "bonus"): ?>
+        <?php if (!empty($dsErro) && ($_POST["acao"] ?? "") != "bonus"): ?>
           <div class="alert alert-error">✖ <?= htmlspecialchars($dsErro) ?></div>
         <?php endif ?>
 
@@ -167,28 +158,28 @@
                   <div class="form-group full">
                     <label for="nmPessoa">Nome Completo *</label>
                     <input type="text" id="nmPessoa" name="nmPessoa" placeholder="Ex: Carlos Lima"
-                      value="<?= htmlspecialchars($_POST["nmPessoa"]) ?>" required
+                      value="<?= htmlspecialchars($_POST["nmPessoa"] ?? "") ?>" required
                     >
                   </div>
 
                   <div class="form-group">
                     <label for="dsCpf">CPF *</label>
                     <input type="text" id="dsCpf" name="dsCpf" placeholder="000.000.000-00"
-                      maxlength="14" value="<?= htmlspecialchars($_POST["dsCpf"]) ?>" required
+                      maxlength="14" value="<?= htmlspecialchars($_POST["dsCpf"] ?? "") ?>" required
                     >
                   </div>
 
                   <div class="form-group">
                     <label for="dsEmail">E-mail *</label>
                     <input type="email" id="dsEmail" name="dsEmail" placeholder="funcionario@bistrot.com"
-                      value="<?= htmlspecialchars($_POST["dsEmail"]) ?>" required
+                      value="<?= htmlspecialchars($_POST["dsEmail"] ?? "") ?>" required
                     >
                   </div>
 
                   <div class="form-group">
                     <label for="dsCargo">Cargo *</label>
                     <input type="text" id="dsCargo" name="dsCargo" placeholder="Ex: Garçom, Cozinheiro..."
-                      list="cargos-list" value="<?= htmlspecialchars($_POST["dsCargo"]) ?>" required
+                      list="cargos-list" value="<?= htmlspecialchars($_POST["dsCargo"] ?? "") ?>" required
                     >
                     <datalist id="cargos-list">
                       <option value="Gerente">
@@ -204,7 +195,7 @@
                   <div class="form-group">
                     <label for="vlSalario">Salário (R$) *</label>
                     <input type="number" id="vlSalario" name="vlSalario" placeholder="0.00"
-                      step="0.01" min="0.01" value="<?= htmlspecialchars($_POST["vlSalario"]) ?>" required>
+                      step="0.01" min="0.01" value="<?= htmlspecialchars($_POST["vlSalario"] ?? "") ?>" required>
                   </div>
                 </div>
 
@@ -219,7 +210,7 @@
           </div>
         </div>
 
-        <div id="tab-bonus" class="tab-pane <?= $_POST["acao"] == "bonus" ? "active" : "" ?>">
+        <div id="tab-bonus" class="tab-pane <?= ($_POST["acao"] ?? "") == "bonus" ? "active" : "" ?>">
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
             <div class="card">
               <div class="card-header">
@@ -240,7 +231,7 @@
                         <option value="">— Selecione —</option>
                         <?php foreach ($arrFuncionarios as $arrFunc): ?>
                           <option value="<?= $arrFunc["id"] ?>" data-salario="<?= $arrFunc["vlSalario"] ?>"
-                            <?= (int) ($_POST["idFuncionario"]) == $arrFunc["id"] ? "selected" : "" ?>>
+                            <?= (int) ($_POST["idFuncionario"] ?? 0) == $arrFunc["id"] ? "selected" : "" ?>>
                             <?= htmlspecialchars($arrFunc["nmPessoa"]) ?> — <?= htmlspecialchars($arrFunc["dsCargo"]) ?>
                             (R$ <?= number_format((float) $arrFunc["vlSalario"], 2, ",", ".") ?>)
                           </option>
@@ -251,7 +242,7 @@
                     <div class="form-group mb-4">
                       <label for="prBonus">Percentual de Bônus (%) *</label>
                       <input type="number" id="prBonus" name="prBonus" placeholder="Ex: 10" step="0.1" min="0.1"
-                        max="100" value="<?= htmlspecialchars($_POST["prBonus"]) ?>" required oninput="visualizarBonus()"
+                        max="100" value="<?= htmlspecialchars($_POST["prBonus"] ?? "") ?>" required oninput="visualizarBonus()"
                       >
                     </div>
 
@@ -259,7 +250,7 @@
                       Preview: <strong id="preview-valor"></strong>
                     </div>
 
-                    <?php if ($dsErro != "" && ($_POST["acao"]) == "bonus"): ?>
+                    <?php if (!empty($dsErro) && ($_POST["acao"] ?? "") == "bonus"): ?>
                       <div class="alert alert-error" style="margin-bottom:16px;">
                         ✖ <?= htmlspecialchars($dsErro) ?>
                       </div>
@@ -272,7 +263,7 @@
             </div>
 
             <div>
-              <?php if ($vlBonus != null && is_array($arrFuncionarios)): ?>
+              <?php if ($vlBonus != null && $arrFuncionarioBonus != null): ?>
                 <div class="card">
                   <div class="card-header">
                     <span class="card-title">✔ Resultado</span>
@@ -283,27 +274,27 @@
                         <tr>
                           <td class="text-muted text-small" style="padding:8px 0;">Funcionário</td>
                           <td style="padding:8px 0; font-weight:600;">
-                            <?= htmlspecialchars($arrFuncionarios["nmPessoa"]) ?>
+                            <?= htmlspecialchars($arrFuncionarioBonus["nmPessoa"]) ?>
                           </td>
                         </tr>
                         <tr>
                           <td class="text-muted text-small" style="padding:8px 0;">Cargo</td>
                           <td style="padding:8px 0;">
                             <span class="badge badge-muted">
-                              <?= htmlspecialchars($arrFuncionarios["dsCargo"]) ?>
+                              <?= htmlspecialchars($arrFuncionarioBonus["dsCargo"]) ?>
                             </span>
                           </td>
                         </tr>
                         <tr>
                           <td class="text-muted text-small" style="padding:8px 0;">Salário Base</td>
                           <td class="price" style="padding:8px 0;">
-                            R$ <?= number_format((float) $arrFuncionarios["vlSalario"], 2, ",", ".") ?>
+                            R$ <?= number_format((float) $arrFuncionarioBonus["vlSalario"], 2, ",", ".") ?>
                           </td>
                         </tr>
                         <tr>
                           <td class="text-muted text-small" style="padding:8px 0;">Percentual</td>
                           <td style="padding:8px 0; color:var(--text);">
-                            <?= htmlspecialchars($_POST["prBonus"]) ?>%
+                            <?= htmlspecialchars($_POST["prBonus"] ?? "") ?>%
                           </td>
                         </tr>
                       </tbody>

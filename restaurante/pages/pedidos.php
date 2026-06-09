@@ -7,12 +7,11 @@
   $dsMsg         = "";
   $dsErro        = "";
 
-  if ($_SERVER["REQUEST_METHOD"] == "GET POST" && $_POST["acao"] == "cancelar")
+  if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["acao"] == "cancelar")
   {
-    var_dump($_POST["nmPessoa"]);
     $id = (int) $_POST["idPedido"];
 
-    if (DataStore::cancelarPedido($id))
+    if (Pedido::cancelar($id))
       $dsMsg = "Pedido #{$id} cancelado.";
     else
       $dsErro = "Não foi possível cancelar o pedido #{$id}.";
@@ -41,7 +40,7 @@
     {
       try
       {
-        $arrPedidoCriado = DataStore::criarPedido($idCliente, $arrItens);
+        $arrPedidoCriado = Pedido::criarPedido($idCliente, $arrItens);
 
         $dsMsg  = "Pedido <strong>#{$arrPedidoCriado["id"]}</strong> criado! ";
         $dsMsg .= "Total: <strong>R$ " . number_format($arrPedidoCriado["vlTotal"], 2, ",", ".") . "</strong>";
@@ -56,11 +55,11 @@
     }
   }
 
-  $arrPedidos  = array_reverse(DataStore::getPedidos());
-  $arrClientes = DataStore::getClientes();
+  $arrPedidos  = array_reverse(Pedido::buscarPedidos());
+  $arrClientes = Cliente::buscarClientes();
   $arrProdutos = [];
 
-  foreach (DataStore::getProdutos() as $arrProduto)
+  foreach (Produto::buscarProduto() as $arrProduto)
   {
     if ($arrProduto["idDisponivel"])
       $arrProdutos[] = $arrProduto;
@@ -312,7 +311,7 @@
             + "</option>";
         }).join("");
 
-        var objLinha      = document.createElement("div");
+        var objLinha       = document.createElement("div");
         objLinha.className = "pedido-item-row";
         objLinha.id        = "item-" + nrIdx;
         objLinha.innerHTML =
@@ -345,9 +344,9 @@
 
       function recalcular()
       {
-        var arrSelects   = document.querySelectorAll("[name=\"idProduto[]\"]");
+        var arrSelects    = document.querySelectorAll("[name=\"idProduto[]\"]");
         var arrQuantidades = document.querySelectorAll("[name=\"qtProduto[]\"]");
-        var vlSubtotal   = 0;
+        var vlSubtotal    = 0;
 
         arrSelects.forEach(function(objSelect, i)
         {
@@ -364,8 +363,8 @@
 
         if (opSelecionada)
         {
-          var dsTipo    = opSelecionada.dataset.tipo;
-          var nrPontos  = parseInt(opSelecionada.dataset.pontos || 0);
+          var dsTipo   = opSelecionada.dataset.tipo;
+          var nrPontos = parseInt(opSelecionada.dataset.pontos || 0);
 
           if (dsTipo == "premium")
             vlDesconto = vlSubtotal * 0.10;
@@ -373,8 +372,8 @@
             vlDesconto = vlSubtotal * 0.05;
         }
 
-        var vlTotal  = Math.max(0, vlSubtotal - vlDesconto);
-        var fmtBR    = function(v) { return "R$ " + v.toFixed(2).replace(".", ","); };
+        var vlTotal = Math.max(0, vlSubtotal - vlDesconto);
+        var fmtBR   = function(v) { return "R$ " + v.toFixed(2).replace(".", ","); };
 
         document.getElementById("sum-subtotal").textContent = fmtBR(vlSubtotal);
         document.getElementById("sum-total").textContent    = fmtBR(vlTotal);
@@ -410,7 +409,6 @@
         if (document.getElementById("tab-novo").classList.contains("active"))
           adicionarItem();
       });
-
     </script>
   </body>
 </html>
