@@ -87,3 +87,24 @@ class Cliente extends Pessoa
       . " | Pontos: {$this->nrPontosFidelidade}";
   }
 }
+
+//UML cliente 
+/*@startuml
+
+class Cliente {
+    - dsTipoCliente : string
+    - nrPontosFidelidade : int
+
+    + getDsTipo() : string
+    + getDsTipoCliente() : string
+    + getNrPontosFidelidade() : int
+    + isPremium() : bool
+    + adicionarPontos(nrPontos : int) : void
+    + toArray() : array
+    + fromArray(arrCliente : array) : Cliente
+    + __toString() : string
+}
+
+Cliente --|> Pessoa
+
+@enduml */

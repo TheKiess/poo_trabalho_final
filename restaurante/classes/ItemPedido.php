@@ -77,3 +77,19 @@ class ItemPedido
       . " @ R$ {$vlUnit} = R$ {$vlTotal}";
   }
 }
+/*@startuml
+
+class ItemPedido {
+    - produto : Produto
+    - qtItens : int
+    - vlUnitario : float
+
+    + getProduto() : Produto
+    + getQtItens() : int
+    + getVlUnitario() : float
+    + calcularSubtotal() : float
+    + toArray() : array
+    + __toString() : string
+}
+
+@enduml*/

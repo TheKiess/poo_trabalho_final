@@ -205,3 +205,34 @@ class Pedido
     return $out;
   }
 }
+
+/*@startuml
+
+class Pedido {
+    - nrContadorId : int {static}
+    - idPedido : int
+    - cliente : Cliente
+    - arrItens : ItemPedido[]
+    - dsStatus : string
+    - dtCriacao : DateTime
+    - vlDesconto : float
+
+    + getIdPedido() : int
+    + getCliente() : Cliente
+    + getDsStatus() : string
+    + getArrItens() : array
+    + getVlDesconto() : float
+    + adicionarItem(produto : Produto, qtItens : int) : void
+    + calcularTotalPedido() : float
+    + aplicarDesconto() : float
+    + confirmar() : void
+    + cancelar() : void
+    + toArray() : array
+    + __toString() : string
+}
+
+Pedido "1" *-- "1..*" ItemPedido
+Pedido --> Cliente
+ItemPedido --> Produto
+
+@enduml */

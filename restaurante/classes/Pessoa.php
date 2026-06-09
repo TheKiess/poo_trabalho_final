@@ -59,3 +59,19 @@ abstract class Pessoa
     return "[{$this->getDsTipo()}] {$this->nmPessoa} | CPF: {$this->dsCpf} | E-mail: {$this->dsEmail}";
   }
 }
+/*@startuml
+
+abstract class Pessoa {
+    # nmPessoa : string
+    # dsCpf : string
+    # dsEmail : string
+
+    + getNmPessoa() : string
+    + getDsCpf() : string
+    + getDsEmail() : string
+    + getDsTipo() : string
+    # toArray() : array
+    + __toString() : string
+}
+
+@enduml*/
