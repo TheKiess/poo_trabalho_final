@@ -141,29 +141,4 @@ class Cliente extends Pessoa
   {
     return parent::__toString() . " | Tipo: {$this->dsTipoCliente}" . " | Pontos: {$this->nrPontosFidelidade}";
   }
-<<<<<<< HEAD
 }
-
-//UML cliente 
-/*@startuml
-
-class Cliente {
-    - dsTipoCliente : string
-    - nrPontosFidelidade : int
-
-    + getDsTipo() : string
-    + getDsTipoCliente() : string
-    + getNrPontosFidelidade() : int
-    + isPremium() : bool
-    + adicionarPontos(nrPontos : int) : void
-    + toArray() : array
-    + fromArray(arrCliente : array) : Cliente
-    + __toString() : string
-}
-
-Cliente --|> Pessoa
-
-@enduml */
-=======
-}
->>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976

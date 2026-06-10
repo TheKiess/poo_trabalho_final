@@ -158,6 +158,10 @@ PHP é uma linguagem server-side com suporte robusto a POO desde a versão 5. A 
 
 Neste projeto foram aplicados recursos do PHP 8: tipagem estrita em todos os parâmetros e retornos, `match` com expressões na `aplicarDesconto()`, constantes de classe (`private const DS_ARQUIVO`), `static` em `fromArray()` para preservar o tipo concreto em subclasses, e PHPDoc em todos os métodos públicos.
 
+### Método usado para preservar o "polimorfismo"
+
+ - Tell, Don't Ask (Mantem o encapsulamento e reduzir o acoplamento, garantindo que as regras de negócio e validações residam dentro da própria classe do objeto.)
+
 ---
 
 ## 👥 Grupo

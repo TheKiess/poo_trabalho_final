@@ -4,7 +4,7 @@
  * Representa um pedido do restaurante.
  *
  * Associação → Cliente  (existe independentemente do pedido)
- * Composição → ItemPedido[] (itens pertencem exclusivamente ao pedido)
+ * Composição → arrItens[] (itens pertencem exclusivamente ao pedido)
  */
 class Pedido
 {
@@ -55,9 +55,6 @@ class Pedido
   }
 
   /**
-   * Adiciona um produto ao pedido (composição com ItemPedido).
-   * Valida disponibilidade do produto e status do pedido.
-   *
    * @param  Produto $produto
    * @param  int     $qtItens
    * @throws RuntimeException
@@ -74,8 +71,6 @@ class Pedido
   }
 
   /**
-   * Regra de negócio 1: calcula o total do pedido descontado.
-   *
    * @return float
    */
   public function calcularTotalPedido(): float
@@ -89,7 +84,7 @@ class Pedido
   }
 
   /**
-   * Regra de negócio 2: aplica desconto conforme perfil do cliente.
+   * Aplica desconto conforme perfil do cliente.
    * Premium     → 10%
    * 100+ pontos →  5%
    * Demais      →  0%
@@ -299,39 +294,4 @@ class Pedido
 
     return $dsRelatorio;
   }
-<<<<<<< HEAD
 }
-
-/*@startuml
-
-class Pedido {
-    - nrContadorId : int {static}
-    - idPedido : int
-    - cliente : Cliente
-    - arrItens : ItemPedido[]
-    - dsStatus : string
-    - dtCriacao : DateTime
-    - vlDesconto : float
-
-    + getIdPedido() : int
-    + getCliente() : Cliente
-    + getDsStatus() : string
-    + getArrItens() : array
-    + getVlDesconto() : float
-    + adicionarItem(produto : Produto, qtItens : int) : void
-    + calcularTotalPedido() : float
-    + aplicarDesconto() : float
-    + confirmar() : void
-    + cancelar() : void
-    + toArray() : array
-    + __toString() : string
-}
-
-Pedido "1" *-- "1..*" ItemPedido
-Pedido --> Cliente
-ItemPedido --> Produto
-
-@enduml */
-=======
-}
->>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976

@@ -163,33 +163,4 @@ class Produto
 
     return "#{$this->idProduto} [{$this->dsCategoria}] {$this->nmProduto} — R$ {$vlFmt} | {$status}";
   }
-<<<<<<< HEAD
 }
-
-/*@startuml
-
-class Produto {
-    - nrContadorId : int {static}
-    - idProduto : int
-    - nmProduto : string
-    - dsProduto : string
-    - vlPreco : float
-    - dsCategoria : string
-    - idDisponivel : bool
-
-    + getIdProduto() : int
-    + getNmProduto() : string
-    + getDsProduto() : string
-    + getVlPreco() : float
-    + getDsCategoria() : string
-    + isIdDisponivel() : bool
-    + setIdDisponivel(idDisponivel : bool) : void
-    + toArray() : array
-    + fromArray(arr : array) : Produto
-    + __toString() : string
-}
-
-@enduml */
-=======
-}
->>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976

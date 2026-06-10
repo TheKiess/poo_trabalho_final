@@ -139,29 +139,4 @@ class Funcionario extends Pessoa
 
     return parent::__toString() . " | Cargo: {$this->dsCargo} | Salário: R$ {$vlFmt}";
   }
-<<<<<<< HEAD
 }
-
-/*@startuml
-
-class Pessoa
-
-class Funcionario {
-    - dsCargo : string
-    - vlSalario : float
-
-    + getDsTipo() : string
-    + getDsCargo() : string
-    + getVlSalario() : float
-    + calcularBonusSalario(prBonus : float) : float
-    + toArray() : array
-    + fromArray(arrFuncionario : array) : Funcionario
-    + __toString() : string
-}
-
-Funcionario --|> Pessoa
-
-@enduml */
-=======
-}
->>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976

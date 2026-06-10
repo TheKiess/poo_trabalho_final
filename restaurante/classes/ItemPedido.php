@@ -2,7 +2,7 @@
 
 /**
  * Representa um item dentro de um pedido.
- * Composição com Pedido — não existe fora dele.
+ * Composição com Pedido, não existe fora dele.
  * Armazena snapshot do preço no momento da criação.
  */
 class ItemPedido
@@ -42,7 +42,7 @@ class ItemPedido
   }
 
   /**
-   * Regra de negócio: calcula o subtotal do item (preço × quantidade).
+   * Calcula o subtotal do item (preço × quantidade).
    *
    * @return float
    */
@@ -52,10 +52,6 @@ class ItemPedido
   }
 
   /**
-   * Serializa o item para array com snapshot dos valores.
-   * Não possui fromArray pois ItemPedido só existe dentro de um Pedido,
-   * sempre criado via adicionarItem().
-   *
    * @return array
    */
   public function toArray(): array
@@ -76,24 +72,4 @@ class ItemPedido
     return "  • {$this->produto->getNmProduto()} x{$this->qtItens}"
       . " @ R$ {$vlUnit} = R$ {$vlTotal}";
   }
-<<<<<<< HEAD
 }
-/*@startuml
-
-class ItemPedido {
-    - produto : Produto
-    - qtItens : int
-    - vlUnitario : float
-
-    + getProduto() : Produto
-    + getQtItens() : int
-    + getVlUnitario() : float
-    + calcularSubtotal() : float
-    + toArray() : array
-    + __toString() : string
-}
-
-@enduml*/
-=======
-}
->>>>>>> df0ee3b059bcf3fc6950e8b11cb4eddcc946c976
