@@ -37,35 +37,30 @@ Pedido
 
 ### Classes de domínio
 
-- [x] **6 classes relacionadas** — `Pessoa`, `Cliente`, `Funcionario`, `Produto`, `ItemPedido`, `Pedido`
-- [x] **Herança** — `Cliente` e `Funcionario` herdam de `Pessoa` abstrata
-- [x] **Composição** — `Pedido` cria `ItemPedido[]` via `adicionarItem()`
-- [x] **Associação** — `Pedido` referencia `Cliente`
-
-### Construtores e inicialização
-
-- [x] Todas as classes possuem `__construct()`
-- [x] `Cliente` e `Funcionario` chamam `parent::__construct()` para inicializar os campos de `Pessoa`
+-  **6 classes relacionadas** — `Pessoa`, `Cliente`, `Funcionario`, `Produto`, `ItemPedido`, `Pedido`
+-  **Herança** — `Cliente` e `Funcionario` herdam de `Pessoa` abstrata
+-  **Composição** — `Pedido` cria `ItemPedido[]` via `adicionarItem()`
+-  **Associação** — `Pedido` referencia `Cliente`
 
 ### Substituição de métodos
 
-- [x] `getDsTipo()` — abstrato em `Pessoa`, implementado em `Cliente` e `Funcionario`
-- [x] `toArray()` — definido como `protected` em `Pessoa`, sobrescrito em cada subclasse com `array_merge(parent::toArray(), [...])`
-- [x] `__toString()` — definido em `Pessoa`, estendido em `Cliente` e `Funcionario`
+-  `getDsTipo()` — abstrato em `Pessoa`, implementado em `Cliente` e `Funcionario`
+-  `toArray()` — definido como `protected` em `Pessoa`, sobrescrito em cada subclasse com `array_merge(parent::toArray(), [...])`
+-  `__toString()` — definido em `Pessoa`, estendido em `Cliente` e `Funcionario`
 
 > **Sobre sobrecarga:** PHP não suporta sobrecarga de assinatura como Java. O método `buscarClientes(int $id = 0)` usa parâmetro opcional para simular o comportamento — sem argumento retorna todos; com ID retorna um. O mesmo padrão é aplicado em `buscarFuncionario()`, `buscarProduto()` e `buscarPedidos()`.
 
 ### Regras de negócio
 
-- [x] `Pedido::calcularTotalPedido()` — soma os subtotais de todos os itens e subtrai o desconto aplicado
-- [x] `Pedido::aplicarDesconto()` — Premium → 10%, 100+ pontos de fidelidade → 5%, demais → 0%
-- [x] `Funcionario::calcularBonusSalario()` — calcula bônus percentual sobre o salário com validação de parâmetro
-- [x] `ItemPedido::calcularSubtotal()` — preço unitário (snapshot) × quantidade
+-  `Pedido::calcularTotalPedido()` — soma os subtotais de todos os itens e subtrai o desconto aplicado
+-  `Pedido::aplicarDesconto()` — Premium → 10%, 100+ pontos de fidelidade → 5%, demais → 0%
+-  `Funcionario::calcularBonusSalario()` — calcula bônus percentual sobre o salário com validação de parâmetro
+-  `ItemPedido::calcularSubtotal()` — preço unitário (snapshot) × quantidade
 
 ### Fluxo de execução
 
-- [x] Interface web demonstra instanciação, mensagens entre objetos e execução das regras de negócio
-- [x] `demonstracao.php` em console exemplifica os objetos em memória de forma explícita (ideal para apresentação)
+-  Interface web demonstra instanciação, mensagens entre objetos e execução das regras de negócio
+-  `demonstracao.php` em console exemplifica os objetos em memória de forma explícita (ideal para apresentação)
 
 ---
 
@@ -78,7 +73,7 @@ Pedido
 private const DS_ARQUIVO = "clientes.json";
 
 public function salvarCliente(): array { ... }
-public static function buscarClientes(int $id = 0): array { ... }
+public static function buscarClientes(int $idCliente = 0): array { ... }
 ```
 
 **`toArray()` / `fromArray()`** — padrão de serialização implementado em todas as classes. Permite transformar qualquer objeto em array para persistir em JSON e reconstruí-lo depois sem acoplamento externo.
@@ -149,7 +144,7 @@ http://localhost:8000/
 
 > ⚠️ O comando `php -S localhost:8000` deve ser executado **dentro da pasta `restaurante/`**, onde está o `index.php`. Executar de outra pasta retorna "resource not found".
 
-**Para executar o demo em console:**
+**Para executar a demonstração em console:**
 
 ```bash
 php demonstracao.php
