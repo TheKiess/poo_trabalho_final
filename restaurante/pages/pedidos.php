@@ -97,7 +97,7 @@
 
         <div class="tabs">
           <button class="tab-btn active" onclick="showTab('lista', this)">🧾 Histórico (<?= count($arrPedidos) ?>)</button>
-          <button class="tab-btn" onclick="showTab('novo', this)">＋ Novo Pedido</button>
+          <button class="tab-btn" onclick="showTab('novo', this)">+ Novo Pedido</button>
         </div>
 
         <div id="tab-lista" class="tab-pane active">
@@ -344,9 +344,9 @@
 
       function recalcular()
       {
-        var arrSelects    = document.querySelectorAll("[name=\"idProduto[]\"]");
+        var arrSelects     = document.querySelectorAll("[name=\"idProduto[]\"]");
         var arrQuantidades = document.querySelectorAll("[name=\"qtProduto[]\"]");
-        var vlSubtotal    = 0;
+        var vlSubtotal     = 0;
 
         arrSelects.forEach(function(objSelect, i)
         {

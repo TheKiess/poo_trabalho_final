@@ -152,7 +152,7 @@ php demonstracao.php
 
 ---
 
-## 🧠 Sobre a Linguagem — PHP 8
+## 🧠 Sobre a Linguagem PHP
 
 PHP é uma linguagem server-side com suporte robusto a POO desde a versão 5. A versão 8 introduziu *typed properties*, *match expressions*, *named arguments*, *union types* e *constructor property promotion*. É amplamente usada em plataformas como WordPress, Laravel e Symfony.
 
@@ -161,6 +161,12 @@ Neste projeto foram aplicados recursos do PHP 8: tipagem estrita em todos os par
 ### Método usado para preservar o "polimorfismo"
 
  - Tell, Don't Ask (Mantem o encapsulamento e reduzir o acoplamento, garantindo que as regras de negócio e validações residam dentro da própria classe do objeto.)
+
+### Para baixar o php no linux
+
+```bash
+sudo apt install php 
+```
 
 ---
 

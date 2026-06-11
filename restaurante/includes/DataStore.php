@@ -4,8 +4,6 @@
    * DataStore
    *
    * Utilitário de persistência em arquivos JSON (Pasta ../data/).
-   * Responsável apenas por leitura, escrita e geração de IDs.
-   * As regras de negócio e operações de domínio pertencem às próprias classes.
    */
   class DataStore
   {
