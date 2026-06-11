@@ -3,9 +3,9 @@
 Trabalho prático da disciplina de **Programação Orientada a Objetos** desenvolvido em PHP 8.  
 O sistema gerencia clientes, funcionários, cardápio e pedidos de um restaurante aplicando os principais conceitos de POO.
 
----
+--- 
 
-## 🏗️ Diagrama de Classes
+##  Diagrama de Classes
 
 ```
 Pessoa  (abstrata)
@@ -37,25 +37,25 @@ Pedido
 
 ### Classes de domínio
 
--  **6 classes relacionadas** — `Pessoa`, `Cliente`, `Funcionario`, `Produto`, `ItemPedido`, `Pedido`
--  **Herança** — `Cliente` e `Funcionario` herdam de `Pessoa` abstrata
--  **Composição** — `Pedido` cria `ItemPedido[]` via `adicionarItem()`
--  **Associação** — `Pedido` referencia `Cliente`
+-  **6 classes relacionadas** `Pessoa`, `Cliente`, `Funcionario`, `Produto`, `ItemPedido`, `Pedido`
+-  **Herança** `Cliente` e `Funcionario` herdam de `Pessoa` abstrata
+-  **Composição** `Pedido` cria `ItemPedido[]` via `adicionarItem()`
+-  **Associação** `Pedido` referencia `Cliente`
 
 ### Substituição de métodos
 
--  `getDsTipo()` — abstrato em `Pessoa`, implementado em `Cliente` e `Funcionario`
--  `toArray()` — definido como `protected` em `Pessoa`, sobrescrito em cada subclasse com `array_merge(parent::toArray(), [...])`
--  `__toString()` — definido em `Pessoa`, estendido em `Cliente` e `Funcionario`
+-  `getDsTipo()` abstrato em `Pessoa`, implementado em `Cliente` e `Funcionario`
+-  `toArray()` definido como `protected` em `Pessoa`, sobrescrito em cada subclasse com `array_merge(parent::toArray(), [...])`
+-  `__toString()` definido em `Pessoa`, estendido em `Cliente` e `Funcionario`
 
 > **Sobre sobrecarga:** PHP não suporta sobrecarga de assinatura como Java. O método `buscarClientes(int $id = 0)` usa parâmetro opcional para simular o comportamento — sem argumento retorna todos; com ID retorna um. O mesmo padrão é aplicado em `buscarFuncionario()`, `buscarProduto()` e `buscarPedidos()`.
 
 ### Regras de negócio
 
--  `Pedido::calcularTotalPedido()` — soma os subtotais de todos os itens e subtrai o desconto aplicado
--  `Pedido::aplicarDesconto()` — Premium → 10%, 100+ pontos de fidelidade → 5%, demais → 0%
--  `Funcionario::calcularBonusSalario()` — calcula bônus percentual sobre o salário com validação de parâmetro
--  `ItemPedido::calcularSubtotal()` — preço unitário (snapshot) × quantidade
+-  `Pedido::calcularTotalPedido()` soma os subtotais de todos os itens e subtrai o desconto aplicado
+-  `Pedido::aplicarDesconto()` Premium → 10%, 100+ pontos de fidelidade → 5%, demais → 0%
+-  `Funcionario::calcularBonusSalario()` calcula bônus percentual sobre o salário com validação de parâmetro
+-  `ItemPedido::calcularSubtotal()` preço unitário (snapshot) × quantidade
 
 ### Fluxo de execução
 
@@ -66,7 +66,7 @@ Pedido
 
 ## 💡 Destaques Técnicos
 
-**Active Record** — cada classe conhece e gerencia sua própria persistência. Não existe um repositório central: `Cliente`, `Funcionario`, `Produto` e `Pedido` carregam seus próprios métodos `salvar*()`, `buscar*()` e a constante `DS_ARQUIVO` com o nome do arquivo JSON correspondente.
+**Active Record** Cada classe conhece e gerencia sua própria persistência. Não existe um repositório central: `Cliente`, `Funcionario`, `Produto` e `Pedido` carregam seus próprios métodos `salvar*()`, `buscar*()` e a constante `DS_ARQUIVO` com o nome do arquivo JSON correspondente.
 
 ```php
 // Cada classe sabe onde e como se persistir
@@ -76,7 +76,7 @@ public function salvarCliente(): array { ... }
 public static function buscarClientes(int $idCliente = 0): array { ... }
 ```
 
-**`toArray()` / `fromArray()`** — padrão de serialização implementado em todas as classes. Permite transformar qualquer objeto em array para persistir em JSON e reconstruí-lo depois sem acoplamento externo.
+**`toArray()` / `fromArray()`** padrão de serialização implementado em todas as classes. Permite transformar qualquer objeto em array para persistir em JSON e reconstruí-lo depois sem acoplamento externo.
 
 ```php
 // Serializar
@@ -92,7 +92,7 @@ $cliente = Cliente::fromArray($arr);
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 restaurante/
@@ -124,7 +124,7 @@ restaurante/
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 **Pré-requisito:** PHP 8.0 ou superior.
 
@@ -152,7 +152,7 @@ php demonstracao.php
 
 ---
 
-## 🧠 Sobre a Linguagem PHP
+##  Sobre a Linguagem PHP
 
 PHP é uma linguagem server-side com suporte robusto a POO desde a versão 5. A versão 8 introduziu *typed properties*, *match expressions*, *named arguments*, *union types* e *constructor property promotion*. É amplamente usada em plataformas como WordPress, Laravel e Symfony.
 
@@ -170,7 +170,7 @@ sudo apt install php
 
 ---
 
-## 👥 Grupo
+## Grupo
 
 | | Nome |
 |---|---|
