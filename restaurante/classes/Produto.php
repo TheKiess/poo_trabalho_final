@@ -74,9 +74,8 @@ class Produto
   public function salvarProduto(): array
   {
     $arrRegistro = array_merge(["id" => DataStore::incrementarProximoId(self::DS_ARQUIVO)], $this->toArray());
-
-    $arrLista   = self::buscarProduto();
-    $arrLista[] = $arrRegistro;
+    $arrLista    = self::buscarProduto();
+    $arrLista[]  = $arrRegistro;
     DataStore::salvarConteudo(self::DS_ARQUIVO, $arrLista);
 
     return $arrRegistro;
@@ -144,11 +143,8 @@ class Produto
    */
   public static function fromArray(array $arrProduto): static
   {
-    $produto = new static(
-      $arrProduto["nmProduto"],
-      $arrProduto["dsProduto"],
-      (float) $arrProduto["vlPreco"],
-      $arrProduto["dsCategoria"]
+    $produto = new static($arrProduto["nmProduto"], $arrProduto["dsProduto"],
+      (float) $arrProduto["vlPreco"], $arrProduto["dsCategoria"]
     );
 
     $produto->setIdDisponivel((bool) $arrProduto["idDisponivel"]);

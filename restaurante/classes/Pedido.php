@@ -10,7 +10,6 @@ class Pedido
 {
   private const DS_ARQUIVO = "pedidos.json";
   private static int $nrContadorId = 1;
-
   private int $idPedido;
   private Cliente $cliente;
   private array $arrItens = [];
@@ -64,7 +63,7 @@ class Pedido
     if ($this->dsStatus != "aberto")
       throw new RuntimeException("Pedido #{$this->idPedido} com status \"{$this->dsStatus}\" não aceita novos itens.");
 
-    if (!$produto->isIdDisponivel())
+    if (!($produto->isIdDisponivel()))
       throw new RuntimeException("Produto \"{$produto->getNmProduto()}\" está indisponível.");
 
     $this->arrItens[] = new ItemPedido($produto, $qtItens);
@@ -114,7 +113,7 @@ class Pedido
    *
    * @throws RuntimeException
    */
-  public function confirmar(): void
+  public function confirmarPedido(): void
   {
     if (empty($this->arrItens))
       throw new RuntimeException("Não é possível confirmar um pedido sem itens.");
@@ -180,7 +179,7 @@ class Pedido
       throw new RuntimeException("Nenhum item válido no pedido.");
 
     $pedido->aplicarDesconto();
-    $pedido->confirmar();
+    $pedido->confirmarPedido();
 
     return $pedido->salvarPedido($idCliente);
   }
@@ -211,7 +210,7 @@ class Pedido
    * @param  int $idPedido
    * @return bool
    */
-  public static function cancelar(int $idPedido): bool
+  public static function cancelarPedido(int $idPedido): bool
   {
     $arrLista = self::buscarPedidos();
 
@@ -260,7 +259,7 @@ class Pedido
 
     return [
       "nmCliente"     => $this->cliente->getNmPessoa(),
-      "dsTipoCliente" => $this->cliente->getDsTipoCliente(),
+      "dsTipoCliente" => $this->cliente->getDsTipo(),
       "arrItens"      => $arrItensPersistidos,
       "vlDesconto"    => $this->vlDesconto,
       "vlTotal"       => $this->calcularTotalPedido(),
@@ -277,7 +276,7 @@ class Pedido
 
     $dsRelatorio  = "\n╔══════════════════════════════════════════╗\n";
     $dsRelatorio .= "  Pedido #{$this->idPedido} — {$dtFmt}\n";
-    $dsRelatorio .= "  Cliente : {$this->cliente->getNmPessoa()} ({$this->cliente->getDsTipoCliente()})\n";
+    $dsRelatorio .= "  Cliente : {$this->cliente->getNmPessoa()} ({$this->cliente->getDsTipo()})\n";
     $dsRelatorio .= "  Status  : {$this->dsStatus}\n";
     $dsRelatorio .= "╠══════════════════════════════════════════╣\n";
 

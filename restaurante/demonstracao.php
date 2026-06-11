@@ -12,7 +12,7 @@
   $vlDesconto = $pedido->aplicarDesconto();
   echo "Desconto aplicado: R$ " . number_format($vlDesconto, 2, ",", ".") . "\n";
 
-  $pedido->confirmar();
+  $pedido->confirmarPedido();
   echo $pedido;
 
   $Garcom = new Funcionario("Carlos", "111.222.333-44", "carlos@email.com", "Garçom", 2500.00);

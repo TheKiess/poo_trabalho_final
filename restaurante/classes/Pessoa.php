@@ -15,7 +15,7 @@ abstract class Pessoa
    * @param string $dsCpf
    * @param string $dsEmail
    */
-  public function __construct(string $nmPessoa, string $dsCpf, string $dsEmail)
+  protected function __construct(string $nmPessoa, string $dsCpf, string $dsEmail)
   {
     $this->nmPessoa = $nmPessoa;
     $this->dsCpf    = $dsCpf;
@@ -37,7 +37,7 @@ abstract class Pessoa
     return $this->dsEmail;
   }
 
-  abstract public function getDsTipo(): string;
+  abstract protected function getDsTipo(): string;
 
   /**
    * Retorna os campos base de Pessoa como array.

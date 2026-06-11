@@ -24,11 +24,6 @@ class Cliente extends Pessoa
 
   public function getDsTipo(): string
   {
-    return "Cliente";
-  }
-
-  public function getDsTipoCliente(): string
-  {
     return $this->dsTipoCliente;
   }
 
@@ -46,7 +41,6 @@ class Cliente extends Pessoa
   {
     $this->nrPontosFidelidade += $nrPontos;
   }
-
 
   /**
    * @return array

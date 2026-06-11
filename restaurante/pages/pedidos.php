@@ -11,7 +11,7 @@
   {
     $id = (int) $_POST["idPedido"];
 
-    if (Pedido::cancelar($id))
+    if (Pedido::cancelarPedido($id))
       $dsMsg = "Pedido #{$id} cancelado.";
     else
       $dsErro = "Não foi possível cancelar o pedido #{$id}.";
