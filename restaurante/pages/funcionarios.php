@@ -309,9 +309,6 @@
                       <div style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:700; color:var(--accent);">
                         R$ <?= number_format($vlBonus, 2, ",", ".") ?>
                       </div>
-                      <div style="font-size:.78rem; color:var(--text-faint); margin-top:6px;">
-                        calculado via <code style="color:var(--accent);">calcularBonusSalario()</code>
-                      </div>
                     </div>
                   </div>
                 </div>
